@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
+using MSQueue;
 
 namespace ParralelLabs
 {
@@ -72,7 +72,13 @@ namespace ParralelLabs
         }
         static void Main(string[] args)
         {
-            
+            var q = new NBQueue<int>();
+            q.Push(1);
+            q.Push(30);
+            q.Push(2);
+            Console.WriteLine(q.Pop());
+            Console.WriteLine(q.Pop());
+            Console.WriteLine(q.Pop());
 
         }
 
