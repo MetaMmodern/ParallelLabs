@@ -3,66 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MSQueue;
-
+using LFLList;
+using Akka.Actor;
+using Library;
+using LibraryMessages;
 namespace ParralelLabs
 {
-
-   
-
-    //class MyList
-    //{
-    //    internal Node head;
-    //    public Node GetLastNode()
-    //    {
-    //        Node temp = head;
-    //        while (temp.next != null)
-    //        {
-    //            temp = temp.next;
-    //        }
-    //        return temp;
-    //    }
-    //    public void InsertLast(int data)
-    //    {
-    //        Node new_node = new Node(data);
-    //        if (head == null)
-    //        {
-    //            head = new_node;
-    //            return;
-    //        }
-    //        GetLastNode().next = new Node(data);
-    //    }
-    //    public void InsertAfter(Node prev, int data)
-    //    {
-    //        Node new_node = new Node(data);
-    //        new_node.next = prev.next;
-    //        prev.next = new_node;
-    //    }
-
-    //    public void InsertAfter(int value, int data)
-    //    {
-    //        Node prev = FindNode(value);
-    //        InsertAfter(prev, data);
-    //    }
-    //    public Node FindNode(int value)
-    //    {
-    //        Node result = head;
-    //        while (result.Value != value)
-    //        {
-    //            result = result.next;
-    //        }
-    //        return result;
-    //    }
-    //}
-
-    
-
     class Program
     {
-        private void testMutex()
+        private static void testMutex()
         {
             Mutex a = new Mutex();
         }
-        private void testSkipList()
+        private static void testSkipList()
         {
             var myStartList = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
             var mySkipList = new SkipList(myStartList, 5);
@@ -70,7 +23,7 @@ namespace ParralelLabs
             Console.WriteLine(mySkipList.ToString());
             Console.WriteLine(mySkipList.Find(5));
         }
-        static void Main(string[] args)
+        private static void testNBQueue()
         {
             var q = new NBQueue<int>();
             q.Push(1);
@@ -79,7 +32,40 @@ namespace ParralelLabs
             Console.WriteLine(q.Pop());
             Console.WriteLine(q.Pop());
             Console.WriteLine(q.Pop());
+        }
+        private static void testLflList()
+        {
+            var l = new LFLList<int>();
+            l.Insert(1);
+            l.Insert(2);
+            l.Insert(3);
+            Console.WriteLine("good");
+            l.Delete(1);
+            Console.WriteLine("good");
 
+        }
+
+        private static void testActors()
+        {
+            var librarySystem = ActorSystem.Create("Library");
+            var library = librarySystem.ActorOf(Props.Create<LibraryActor>());
+            var visitor1 = librarySystem.ActorOf(Props.Create<VisitorActor>("1"));
+            var visitor2 = librarySystem.ActorOf(Props.Create<VisitorActor>("2"));
+            library.Tell(new ListBooks(), visitor1);
+            library.Tell(new TakeBookHome("1"), visitor1);
+            library.Tell(new TakeBookHome("1"), visitor2);
+            library.Tell(new TakeBookHome("2"), visitor2);
+            Console.ReadLine();
+            visitor1.Tell(new ShowABook());
+            visitor2.Tell(new ShowABook());
+            Console.ReadLine();
+        }
+        static void Main(string[] args)
+        {
+            //testNBQueue();
+            //testLflList();
+            //testSkipList();
+            testActors();
         }
 
 

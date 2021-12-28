@@ -49,7 +49,7 @@ namespace ParralelLabs
             }
             notify = true;
         }
-        public void _notifyAll() { }
+        //public void _notifyAll() { } // needs modifications outside
 
     }
 }
